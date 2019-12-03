@@ -1,0 +1,69 @@
+---
+dockerhub_version: "9.0.1"
+dockerhub_base: ansible
+
+awx_task_hostname: awx-task
+awx_web_hostname: awx
+host_port: 80
+host_port_ssl: 443
+# ssl_certificate:
+docker_compose_dir: "/opt/awx/awxcompose"
+
+# AWX Secret key
+# It's *very* important that this stay the same between upgrades or you will lose the ability to decrypt your credentials
+secret_key: awxsecret
+admin_user: admin
+admin_password: password
+
+# Container networking configuration
+# Set different search domain and name server
+# awx_container_search_domains: example.com,ansible.com
+# awx_alternate_dns_servers: "10.1.2.3,10.2.3.4"
+
+rabbitmq_version: "3.7.4"
+rabbitmq_image: "ansible/awx_rabbitmq:{{rabbitmq_version}}"
+rabbitmq_default_vhost: "awx"
+rabbitmq_erlang_cookie: "cookiemonster"
+rabbitmq_hostname: "rabbitmq"
+rabbitmq_port: "5672"
+rabbitmq_user: "guest"
+rabbitmq_password: "guest"
+
+postgres_data_dir: "/opt/awx/pgdocker"
+postgresql_version: "10"
+postgresql_image: "postgres:{{postgresql_version}}"
+# Set pg_hostname if you have an external postgres server, otherwise a new postgres service will be created
+# pg_hostname: postgresql
+pg_username: awx
+# pg_password should be random 10 character alphanumeric string, when postgresql is running on kubernetes
+# NB: it's a limitation of the "official" postgres helm chart
+pg_password: awxpass
+pg_database: awx
+pg_port: 5432
+# The following variable is only required when using the provided containerized postgres deployment on OpenShift
+# pg_admin_password: postgrespass
+
+memcached_image: "memcached"
+memcached_version: "alpine"
+memcached_hostname: "memcached"
+memcached_port: "11211"
+
+# Proxy
+# http_proxy: http://proxy:3128
+# https_proxy: http://proxy:3128
+# no_proxy: mycorp.org
+
+# AWX project data folder. If you need access to the location where AWX stores the projects
+# it manages from the docker host, you can set this to turn it into a volume for the container.
+# project_data_dir: /var/lib/awx/projects
+
+# CA Trust directory. If you need to provide custom CA certificates, supplying
+# this variable causes this directory on the host to be bind mounted over
+# /etc/pki/ca-trust in the awx_task and awx_web containers.
+# ca_trust_dir: /etc/pki/ca-trust/source/anchors
+
+# Include /etc/nginx/awx_extra.conf
+# Note the use of glob pattern for nginx
+# which makes include "optional" - i.e. not fail
+# if file is absent
+# extra_nginx_include: "/etc/nginx/awx_extra[.]conf"
