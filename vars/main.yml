@@ -1,0 +1,3 @@
+---
+ssl_certificate_key: "key.pem"
+ssl_certificate_cert: "cert.pem"

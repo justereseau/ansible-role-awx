@@ -6,7 +6,8 @@ awx_task_hostname: awx-task
 awx_web_hostname: awx
 host_port: 80
 host_port_ssl: 443
-# ssl_certificate:
+# ssl_key_path: ""
+# ssl_certificate_path: ""
 docker_compose_dir: "/opt/awx/awxcompose"
 
 # AWX Secret key
