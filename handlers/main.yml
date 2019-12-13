@@ -6,6 +6,3 @@
 
 - name: update ca
   command: docker exec awx_web '/usr/bin/update-ca-trust'
-
-- name: update ca
-  command: docker exec awx_task '/usr/bin/update-ca-trust'
