@@ -36,7 +36,7 @@ http {
         server 127.0.0.1:8051;
     }
 
-    {% if ssl_certificate_path is defined %}
+    {% if ssl_enabled %}
     server {
         listen 8052 default_server;
         server_name _;
@@ -47,7 +47,7 @@ http {
     {%endif %}
 
     server {
-        {% if ssl_certificate_path is defined %}
+        {% if ssl_enabled %}
         listen 8053 ssl;
 
         ssl_certificate /etc/nginx/cert.pem;

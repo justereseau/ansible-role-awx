@@ -4,20 +4,16 @@
     path: "{{ docker_compose_dir }}"
     state: directory
 
-- name: Copy ssl key
+- name: Copy ssl key pair
   copy:
-    src: "{{ ssl_key_path }}"
-    dest: "{{ docker_compose_dir }}/{{ ssl_certificate_key }}"
-  when: ssl_key_path is defined
-  notify:
-    - update ca
-    - restart container
-
-- name: Copy ssl cert
-  copy:
-    src: "{{ ssl_certificate_path }}"
-    dest: "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}"
-  when: ssl_certificate_path is defined
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}" 
+  when: ssl_import_key_pair
+  loop:
+   - src: "{{ ssl_certificate_path }}"
+     dst: "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}"
+   - src: "{{ ssl_key_path }}"
+     dst: "{{ docker_compose_dir }}/{{ ssl_certificate_key }}"
   notify:
     - update ca
     - restart container

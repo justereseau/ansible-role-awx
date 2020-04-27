@@ -12,7 +12,7 @@ services:
       - postgres
       {% endif %}
     ports:
-      {% if ssl_certificate_path is defined %}
+      {% if ssl_enabled %}
       - "{{ host_port_ssl }}:8053"
       {% endif %}
       - "{{ host_port }}:8052"
@@ -33,7 +33,7 @@ services:
     {% if ca_trust_dir is defined %}
       - "{{ ca_trust_dir +':/etc/pki/ca-trust/source/anchors:ro' }}"
     {% endif %}
-    {% if ssl_certificate_key is defined %}
+    {% if ssl_enabled %}
       - "{{ docker_compose_dir }}/{{ ssl_certificate_key }}:/etc/nginx/key.pem:ro"
       - "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}:/etc/nginx/cert.pem:ro"
     {% endif %}
@@ -86,7 +86,7 @@ services:
     {% if ca_trust_dir is defined %}
       - "{{ ca_trust_dir +':/etc/pki/ca-trust/source/anchors:ro' }}"
     {% endif %}
-    {% if ssl_certificate_path is defined %}
+    {% if ssl_enabled %}
       - "{{ docker_compose_dir }}/{{ ssl_certificate_key }}:/etc/nginx/key.pem:ro"
       - "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}:/etc/nginx/cert.pem:ro"
     {% endif %}
