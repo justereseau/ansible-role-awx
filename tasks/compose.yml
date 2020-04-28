@@ -7,13 +7,13 @@
 - name: Copy ssl key pair
   copy:
     src: "{{ item.src }}"
-    dest: "{{ item.dst }}" 
+    dest: "{{ item.dst }}"
   when: ssl_import_key_pair
   loop:
-   - src: "{{ ssl_certificate_path }}"
-     dst: "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}"
-   - src: "{{ ssl_key_path }}"
-     dst: "{{ docker_compose_dir }}/{{ ssl_certificate_key }}"
+    - src: "{{ ssl_certificate_path }}"
+      dst: "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}"
+    - src: "{{ ssl_key_path }}"
+      dst: "{{ docker_compose_dir }}/{{ ssl_certificate_key }}"
   notify:
     - update ca
     - restart container
