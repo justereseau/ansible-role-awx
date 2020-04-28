@@ -5,7 +5,13 @@ dockerhub_base: ansible
 awx_task_hostname: awx-task
 awx_web_hostname: awx
 host_port: 80
+
+ssl_enabled: false
 host_port_ssl: 443
+ssl_certificate_key: "key.pem"
+ssl_certificate_cert: "cert.pem"
+
+ssl_import_key_pair: false
 # ssl_key_path: ""
 # ssl_certificate_path: ""
 docker_compose_dir: "/opt/awx/awxcompose"
