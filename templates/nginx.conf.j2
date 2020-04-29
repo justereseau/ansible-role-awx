@@ -30,13 +30,13 @@ http {
 
     upstream uwsgi {
         server 127.0.0.1:8050;
-        }
+    }
 
     upstream daphne {
         server 127.0.0.1:8051;
     }
 
-    {% if ssl_enabled %}
+    {% if ssl_enabled -%}
     server {
         listen 8052 default_server;
         server_name _;
@@ -44,16 +44,16 @@ http {
         # Redirect all HTTP links to the matching HTTPS page
         return 301 https://$host$request_uri;
     }
-    {%endif %}
+    {%- endif %}
 
     server {
-        {% if ssl_enabled %}
+        {% if ssl_enabled -%}
         listen 8053 ssl;
         ssl_certificate /etc/nginx/awxweb.pem;
         ssl_certificate_key /etc/nginx/awxweb_key.pem;
-        {% else %}
+        {% else -%}
         listen 8052 default_server;
-        {% endif %}
+        {%- endif %}
 
         # If you have a domain name, this is where to add it
         server_name _;
@@ -108,7 +108,7 @@ http {
             uwsgi_read_timeout 120s;
             uwsgi_pass uwsgi;
             include /etc/nginx/uwsgi_params;
-            {%- if extra_nginx_include is defined %}
+            {% if extra_nginx_include is defined -%}
             include {{ extra_nginx_include }};
             {%- endif %}
             proxy_set_header X-Forwarded-Port 443;
