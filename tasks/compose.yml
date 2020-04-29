@@ -57,7 +57,7 @@
     - name: Start the containers
       docker_compose:
         project_src: "{{ docker_compose_dir }}"
-        restarted: "{{ awx_compose_config is changed or awx_secret_key is changed }}"
+        restarted: "{{ awx_compose_config is changed or awx_secret_key is changed or awx_compose_ca is changed }}"
       register: awx_compose_start
 
     - name: Update CA trust in awx_web container
