@@ -1,8 +1,1 @@
 ---
-- name: restart container
-  docker_compose:
-    project_src: "{{ docker_compose_dir }}"
-    restarted: true
-
-- name: update ca
-  command: docker exec awx_web '/usr/bin/update-ca-trust'
