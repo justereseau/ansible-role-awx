@@ -1,5 +1,5 @@
 ---
-dockerhub_version: "9.0.1"
+dockerhub_version: "11.1.0"
 dockerhub_base: ansible
 
 awx_task_hostname: awx-task
@@ -27,15 +27,6 @@ admin_password: password
 # awx_container_search_domains: example.com,ansible.com
 # awx_alternate_dns_servers: "10.1.2.3,10.2.3.4"
 
-rabbitmq_version: "3.7.4"
-rabbitmq_image: "ansible/awx_rabbitmq:{{rabbitmq_version}}"
-rabbitmq_default_vhost: "awx"
-rabbitmq_erlang_cookie: "cookiemonster"
-rabbitmq_hostname: "rabbitmq"
-rabbitmq_port: "5672"
-rabbitmq_user: "guest"
-rabbitmq_password: "guest"
-
 postgres_data_dir: "/opt/awx/pgdocker"
 postgresql_version: "10"
 postgresql_image: "postgres:{{postgresql_version}}"
@@ -50,10 +41,14 @@ pg_port: 5432
 # The following variable is only required when using the provided containerized postgres deployment on OpenShift
 # pg_admin_password: postgrespass
 
+redis_image: "redis"
+
 memcached_image: "memcached"
 memcached_version: "alpine"
 memcached_hostname: "memcached"
 memcached_port: "11211"
+
+compose_start_containers: true
 
 # Proxy
 # http_proxy: http://proxy:3128
