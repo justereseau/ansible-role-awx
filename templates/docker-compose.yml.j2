@@ -16,7 +16,6 @@ services:
       - "{{ host_port_ssl }}:8053"
       {% endif %}
       - "{{ host_port }}:8052"
-    hostname: {{ awx_web_hostname }}
     user: root
     restart: unless-stopped
     volumes:
@@ -75,7 +74,6 @@ services:
       {% if pg_hostname is not defined %}
       - postgres
       {% endif %}
-    hostname: {{ awx_task_hostname }}
     user: root
     restart: unless-stopped
     volumes:

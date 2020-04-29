@@ -2,8 +2,6 @@
 dockerhub_version: "11.1.0"
 dockerhub_base: ansible
 
-awx_task_hostname: awx-task
-awx_web_hostname: awx
 host_port: 80
 
 ssl_enabled: false
