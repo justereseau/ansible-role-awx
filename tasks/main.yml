@@ -5,6 +5,9 @@
   run_once: true
   no_log: true
 
+- import_tasks: assets.yml
+  when: customized_assets is defined
+
 - import_tasks: upgrade_postgres.yml
   when:
     - postgres_data_dir is defined

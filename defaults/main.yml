@@ -48,6 +48,17 @@ memcached_port: "11211"
 
 compose_start_containers: true
 
+# Assets
+# customized_assets:
+#   header: /local/path/to/logo-header.svg
+#   login: /local/path/to/logo-login.svg
+#   favicon: /local/path/to/favicon.ico
+# For tower assets:
+# customized_assets:
+  # header: assets/tower-logo-header.svg
+  # login: assets/tower-logo-login.svg
+  # favicon: assets/tower-favicon.ico
+
 # Proxy
 # http_proxy: http://proxy:3128
 # https_proxy: http://proxy:3128

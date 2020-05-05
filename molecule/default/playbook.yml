@@ -17,4 +17,4 @@
   roles:
     - geerlingguy.pip
     - geerlingguy.docker
-    - awx
+    - lucasmaurice.awx

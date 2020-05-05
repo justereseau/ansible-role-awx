@@ -74,11 +74,25 @@ http {
           deny all;
         }
 
+        {% if customized_assets.header is defined -%}
+            location /static/assets/logo-header.svg { alias /customized_assets/logo-header.svg; }
+        {%- endif %}
+
+        {% if customized_assets.login is defined -%}
+            location /static/assets/logo-login.svg { alias /customized_assets/logo-login.svg; }
+        {%- endif %}
+
+        {% if customized_assets.favicon is defined -%}
+            location /static/assets/favicon.ico { alias /customized_assets/favicon.ico; }
+            location /static/favicon.ico { alias /customized_assets/favicon.ico; }
+            location /favicon.ico { alias /customized_assets/favicon.ico; }
+        {% else -%}
+            location /favicon.ico { alias /var/lib/awx/public/static/favicon.ico; }
+        {%- endif %}
+
         location /static/ {
             alias /var/lib/awx/public/static/;
         }
-
-        location /favicon.ico { alias /var/lib/awx/public/static/favicon.ico; }
 
         location /websocket {
             # Pass request to the upstream alias
