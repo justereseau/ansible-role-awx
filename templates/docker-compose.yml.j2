@@ -6,7 +6,7 @@ services:
     image: {{ awx_web_docker_actual_image }}
     container_name: awx_web
     depends_on:
-      - rabbitmq
+      - redis
       - memcached
       {% if pg_hostname is not defined %}
       - postgres
@@ -16,14 +16,18 @@ services:
       - "{{ host_port_ssl }}:8053"
       {% endif %}
       - "{{ host_port }}:8052"
-    hostname: {{ awx_web_hostname }}
     user: root
     restart: unless-stopped
     volumes:
+      - supervisor-socket:/var/run/supervisor
+      - rsyslog-socket:/var/run/awx-rsyslog/
+      - rsyslog-config:/var/lib/awx/rsyslog/
       - "{{ docker_compose_dir }}/SECRET_KEY:/etc/tower/SECRET_KEY"
       - "{{ docker_compose_dir }}/environment.sh:/etc/tower/conf.d/environment.sh"
       - "{{ docker_compose_dir }}/credentials.py:/etc/tower/conf.d/credentials.py"
       - "{{ docker_compose_dir }}/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "{{ docker_compose_dir }}/redis_socket:/var/run/redis/:rw"
+      - "{{ docker_compose_dir }}/memcached_socket:/var/run/memcached/:rw"
     {% if project_data_dir is defined %}
       - "{{ project_data_dir +':/var/lib/awx/projects:rw' }}"
     {% endif %}
@@ -34,8 +38,17 @@ services:
       - "{{ ca_trust_dir +':/etc/pki/ca-trust/source/anchors:ro' }}"
     {% endif %}
     {% if ssl_enabled %}
-      - "{{ docker_compose_dir }}/{{ ssl_certificate_key }}:/etc/nginx/key.pem:ro"
-      - "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}:/etc/nginx/cert.pem:ro"
+      - "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}:/etc/nginx/awxweb.pem:ro"
+      - "{{ docker_compose_dir }}/{{ ssl_certificate_key }}:/etc/nginx/awxweb_key.pem:ro"
+    {% endif %}
+    {% if customized_assets.header is defined %}
+      - "{{ docker_compose_dir }}/assets/logo-header.svg:/customized_assets/logo-header.svg:rw"
+    {% endif %}
+    {% if customized_assets.login is defined %}
+      - "{{ docker_compose_dir }}/assets/logo-login.svg:/customized_assets/logo-login.svg:rw"
+    {% endif %}
+    {% if customized_assets.favicon is defined %}
+      - "{{ docker_compose_dir }}/assets/favicon.ico:/customized_assets/favicon.ico:rw"
     {% endif %}
     {% if (awx_container_search_domains is defined) and (',' in awx_container_search_domains) %}
     {% set awx_container_search_domains_list = awx_container_search_domains.split(',') %}
@@ -64,19 +77,23 @@ services:
     image: {{ awx_task_docker_actual_image }}
     container_name: awx_task
     depends_on:
-      - rabbitmq
+      - redis
       - memcached
       - web
       {% if pg_hostname is not defined %}
       - postgres
       {% endif %}
-    hostname: {{ awx_task_hostname }}
     user: root
     restart: unless-stopped
     volumes:
+      - supervisor-socket:/var/run/supervisor
+      - rsyslog-socket:/var/run/awx-rsyslog/
+      - rsyslog-config:/var/lib/awx/rsyslog/
       - "{{ docker_compose_dir }}/SECRET_KEY:/etc/tower/SECRET_KEY"
       - "{{ docker_compose_dir }}/environment.sh:/etc/tower/conf.d/environment.sh"
       - "{{ docker_compose_dir }}/credentials.py:/etc/tower/conf.d/credentials.py"
+      - "{{ docker_compose_dir }}/redis_socket:/var/run/redis/:rw"
+      - "{{ docker_compose_dir }}/memcached_socket:/var/run/memcached/:rw"
     {% if project_data_dir is defined %}
       - "{{ project_data_dir +':/var/lib/awx/projects:rw' }}"
     {% endif %}
@@ -87,8 +104,7 @@ services:
       - "{{ ca_trust_dir +':/etc/pki/ca-trust/source/anchors:ro' }}"
     {% endif %}
     {% if ssl_enabled %}
-      - "{{ docker_compose_dir }}/{{ ssl_certificate_key }}:/etc/nginx/key.pem:ro"
-      - "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}:/etc/nginx/cert.pem:ro"
+      - "{{ docker_compose_dir }}/{{ ssl_certificate_cert }}:/etc/nginx/awxweb.pem:ro"
     {% endif %}
     {% if (awx_container_search_domains is defined) and (',' in awx_container_search_domains) %}
     {% set awx_container_search_domains_list = awx_container_search_domains.split(',') %}
@@ -112,28 +128,33 @@ services:
       http_proxy: {{ http_proxy | default('') }}
       https_proxy: {{ https_proxy | default('') }}
       no_proxy: {{ no_proxy | default('') }}
+      SUPERVISOR_WEB_CONFIG_PATH: '/supervisor.conf'
 
-  rabbitmq:
-    image: {{ rabbitmq_image }}
-    container_name: awx_rabbitmq
+  redis:
+    image: {{ redis_image }}
+    container_name: awx_redis
     restart: unless-stopped
     environment:
-      RABBITMQ_DEFAULT_VHOST: "{{ rabbitmq_default_vhost }}"
-      RABBITMQ_DEFAULT_USER: "{{ rabbitmq_user }}"
-      RABBITMQ_DEFAULT_PASS: "{{ rabbitmq_password | quote }}"
-      RABBITMQ_ERLANG_COOKIE: {{ rabbitmq_erlang_cookie }}
       http_proxy: {{ http_proxy | default('') }}
       https_proxy: {{ https_proxy | default('') }}
       no_proxy: {{ no_proxy | default('') }}
+    command: ["/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - "{{ docker_compose_dir }}/redis.conf:/usr/local/etc/redis/redis.conf:ro"
+      - "{{ docker_compose_dir }}/redis_socket:/var/run/redis/:rw"
+      - "{{ docker_compose_dir }}/memcached_socket:/var/run/memcached/:rw"
 
   memcached:
     image: "{{ memcached_image }}:{{ memcached_version }}"
     container_name: awx_memcached
+    command: ["-s", "/var/run/memcached/memcached.sock", "-a", "0666"]
     restart: unless-stopped
     environment:
       http_proxy: {{ http_proxy | default('') }}
       https_proxy: {{ https_proxy | default('') }}
       no_proxy: {{ no_proxy | default('') }}
+    volumes:
+      - "{{ docker_compose_dir }}/memcached_socket:/var/run/memcached/:rw"
 
   {% if pg_hostname is not defined %}
   postgres:
@@ -151,3 +172,7 @@ services:
       https_proxy: {{ https_proxy | default('') }}
       no_proxy: {{ no_proxy | default('') }}
   {% endif %}
+volumes:
+  supervisor-socket:
+  rsyslog-socket:
+  rsyslog-config:
