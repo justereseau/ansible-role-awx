@@ -15,7 +15,9 @@ services:
       - "{{ host_port_ssl }}:8053"
       {% endif %}
       - "{{ host_port }}:8052"
+    {% if awx_web_hostname is defined %}
     hostname: {{ awx_web_hostname }}
+    {% endif %}
     user: root
     restart: unless-stopped
     volumes:
@@ -93,7 +95,9 @@ services:
       - postgres
       {% endif %}
     command: /usr/bin/launch_awx_task.sh
+    {% if awx_task_hostname is defined %}
     hostname: {{ awx_task_hostname }}
+    {% endif %}
     user: root
     restart: unless-stopped
     volumes:
