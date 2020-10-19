@@ -1,5 +1,8 @@
 ---
-dockerhub_version: "11.1.0"
+dockerhub_version: "15.0.0"
+
+awx_image: "awx"
+
 dockerhub_base: ansible
 
 host_port: 80
@@ -40,11 +43,6 @@ pg_port: 5432
 # pg_admin_password: postgrespass
 
 redis_image: "redis"
-
-memcached_image: "memcached"
-memcached_version: "alpine"
-memcached_hostname: "memcached"
-memcached_port: "11211"
 
 compose_start_containers: true
 
