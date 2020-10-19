@@ -17,6 +17,7 @@
     - name: Ensure directory exists
       file:
         path: "{{ docker_deploy_base_path }}"
+        mode: "0600"
         state: directory
       when: ansible_connection != "local" and docker_registry is not defined
 
@@ -24,6 +25,7 @@
       copy:
         src: "{{ awx_local_base_config_path|default('/tmp') }}/{{ awx_image }}_{{ awx_version }}.tar"
         dest: "{{ docker_deploy_base_path }}/{{ awx_image }}_{{ awx_version }}.tar"
+        mode: "0600"
       when: ansible_connection != "local" and docker_registry is not defined
 
     - name: Load awx image
