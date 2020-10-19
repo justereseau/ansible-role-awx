@@ -2,22 +2,26 @@
 - name: Create assets directory
   file:
     path: "{{ docker_compose_dir }}/assets"
+    mode: "0600"
     state: directory
 
 - name: Copy specified header logo.
   copy:
     src: "{{ customized_assets.header }}"
     dest: "{{ docker_compose_dir }}/assets/logo-header.svg"
+    mode: "0600"
   when: customized_assets.header is defined
 
 - name: Copy specified login logo.
   copy:
     src: "{{ customized_assets.login }}"
     dest: "{{ docker_compose_dir }}/assets/logo-login.svg"
+    mode: "0600"
   when: customized_assets.login is defined
 
 - name: Copy specified favicon.
   copy:
     src: "{{ customized_assets.favicon }}"
     dest: "{{ docker_compose_dir }}/assets/favicon.ico"
+    mode: "0600"
   when: customized_assets.favicon is defined

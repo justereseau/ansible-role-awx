@@ -17,13 +17,14 @@
   file:
     state: directory
     path: "{{ item }}"
+    mode: "0600"
     recurse: true
   when: upgrade_postgres | bool
   with_items:
     - "{{ postgres_data_dir }}/10/data"
 
 - name: Stop AWX before upgrading postgres
-  docker_compose:
+  docker_service:
     project_src: "{{ docker_compose_dir }}"
     stopped: true
   when: upgrade_postgres | bool
@@ -41,6 +42,7 @@
   copy:
     src: "{{ postgres_data_dir + '/pgdata/pg_hba.conf' }}"
     dest: "{{ postgres_data_dir + '/10/data/' }}"
+    mode: "0600"
   when: upgrade_postgres | bool
 
 - name: Remove old data directory
